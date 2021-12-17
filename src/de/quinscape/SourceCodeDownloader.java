@@ -5,37 +5,38 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 public class SourceCodeDownloader {
 
-    public void startApplication()throws IOException{
-        downloadSourceCode();
+    public void downloadSourceCode(String urlString) throws IOException {
+        String filename = buildRandomFilename();
+        fileExist(filename);
+        printBuffering();
+        URL url = new URL(urlString);
+        Files.copy(url.openStream(), Paths.get(filename));
+        printInformation();
     }
 
-    private void downloadSourceCode() throws IOException {
-        Path path = Paths.get("sourceCode.html");
-        if (!Files.exists(path)){
-            printBuffering();
-            URL url = new URL( "https://www.quinscape.de/" );
-            Files.copy(url.openStream(), Paths.get("sourceCode.html"));
-            printInformation();
-        } else {
-            System.out.println("File already exists. Please check your directory!");
+    private String buildRandomFilename(){
+        UUID uuid = UUID.randomUUID();
+        return uuid + ".html";
+    }
+
+    private void fileExist(String filename) throws IOException {
+        Path path = Paths.get(filename);
+        if (Files.exists(path)) {
+            Files.delete(path);
         }
     }
 
-    private void printInformation(){
+    private void printInformation() {
         System.out.println("Source code successfully downloaded!");
     }
 
-    private void printBuffering(){
+    private void printBuffering() {
         System.out.println("DOWNLOADING SOURCE CODE...");
     }
-
-
-
-
-
 
 
 }
